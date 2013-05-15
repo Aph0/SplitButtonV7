@@ -1,40 +1,67 @@
 package org.vaadin.hene.splitbutton.client.splitbutton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.vaadin.hene.popupbutton.widgetset.client.ui.PopupButtonState;
 import org.vaadin.hene.splitbutton.SplitButton;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
-import com.vaadin.client.ConnectorHierarchyChangeEvent.ConnectorHierarchyChangeHandler;
-import com.vaadin.client.HasComponentsConnector;
-import com.vaadin.client.Util;
 import com.vaadin.client.communication.StateChangeEvent;
-import com.vaadin.client.ui.AbstractComponentConnector;
-import com.vaadin.client.ui.SimpleManagedLayout;
+import com.vaadin.client.ui.AbstractComponentContainerConnector;
+import com.vaadin.client.ui.layout.ElementResizeEvent;
+import com.vaadin.client.ui.layout.ElementResizeListener;
 import com.vaadin.shared.ui.Connect;
 
 @Connect(SplitButton.class)
-public class SplitButtonConnector extends AbstractComponentConnector implements
-        HasComponentsConnector, ConnectorHierarchyChangeHandler,
-        SimpleManagedLayout {
+public class SplitButtonConnector extends AbstractComponentContainerConnector {
 
     private ComponentConnector button;
     private ComponentConnector popupButton;
 
+    private final ElementResizeListener popupButtonResizeListener = new ElementResizeListener() {
+        public void onElementResize(ElementResizeEvent e) {
+            int buttonWidth = getLayoutManager().getOuterWidth(e.getElement());
+            int buttonHeight = getLayoutManager()
+                    .getOuterHeight(e.getElement());
+            getWidget().setPopupButtonWidth(buttonWidth);
+            getWidget().setPopupButtonHeight(buttonHeight);
+        }
+    };
+
+    private final ElementResizeListener splitButtonResizelistener = new ElementResizeListener() {
+        public void onElementResize(ElementResizeEvent e) {
+            int buttonWidth = getLayoutManager().getOuterWidth(e.getElement());
+            getWidget().adjustSplitButtonWidth(buttonWidth);
+        }
+    };
+
+    private final ElementResizeListener leftButtonResizeListener = new ElementResizeListener() {
+        public void onElementResize(ElementResizeEvent e) {
+            int buttonHeight = getLayoutManager()
+                    .getOuterHeight(e.getElement());
+            getWidget().setButtonHeight(buttonHeight);
+        }
+    };
+
+    private HandlerRegistration loadHandler;
+
     public SplitButtonConnector() {
-        addConnectorHierarchyChangeHandler(this);
+
     }
 
     @Override
     protected void init() {
         // TODO Auto-generated method stub
         super.init();
+        getLayoutManager().addElementResizeListener(getWidget().getElement(),
+                splitButtonResizelistener);
+
     }
 
     @Override
@@ -65,64 +92,56 @@ public class SplitButtonConnector extends AbstractComponentConnector implements
     }
 
     @Override
-    public List<ComponentConnector> getChildComponents() {
-        return new ArrayList<ComponentConnector>() {
-            {
-                add(button);
-                add(popupButton);
-            }
-        };
-    }
+    public void onConnectorHierarchyChange(
+            ConnectorHierarchyChangeEvent connectorHierarchyChangeEvent) {
+        List<ComponentConnector> children = getChildComponents();
+        if (children.size() < 2) {
+            return;
+        }
 
-    @Override
-    public void setChildComponents(List<ComponentConnector> children) {
         button = children.get(0);
         popupButton = children.get(1);
         ((PopupButtonState) popupButton.getState()).popupPositionConnector = this;
-    }
 
-    @Override
-    public HandlerRegistration addConnectorHierarchyChangeHandler(
-            ConnectorHierarchyChangeHandler handler) {
-        return ensureHandlerManager().addHandler(
-                ConnectorHierarchyChangeEvent.TYPE, handler);
-    }
+        if (loadHandler != null) {
+            loadHandler.removeHandler();
+        }
+        loadHandler = button.getWidget().addHandler(new LoadHandler() {
 
-    @Override
-    public void onConnectorHierarchyChange(
-            ConnectorHierarchyChangeEvent connectorHierarchyChangeEvent) {
+            @Override
+            public void onLoad(LoadEvent event) {
+                // this in case there is an icon set
+                getLayoutManager().setNeedsMeasure(button);
+                getLayoutManager().setNeedsMeasure(SplitButtonConnector.this);
+                getLayoutManager().setNeedsMeasure(popupButton);
+            }
+
+        }, LoadEvent.getType());
+
         getWidget().setButtonWidgets(button.getWidget(),
                 popupButton.getWidget());
+        getLayoutManager()
+                .addElementResizeListener(popupButton.getWidget().getElement(),
+                        popupButtonResizeListener);
+        getLayoutManager().addElementResizeListener(
+                button.getWidget().getElement(), leftButtonResizeListener);
 
     }
 
     @Override
-    public void layout() {
+    public void onUnregister() {
 
-        Widget popupButtonWidget = getWidget().getPopupButtonWidget();
-        Widget buttonWidget = getWidget().getButtonWidget();
-        String height = getState().height;
-
-        if (height == null || height.equals("")) {
-            buttonWidget.setHeight("");
-            popupButtonWidget.setHeight("");
-            int buttonHeight = Util.getRequiredHeight(buttonWidget);
-            int popupButtonHeight = Util.getRequiredHeight(popupButtonWidget);
-            if (buttonHeight > popupButtonHeight) {
-                buttonWidget.setHeight(buttonHeight + "px");
-                popupButtonWidget.setHeight(buttonHeight + "px");
-            } else {
-                buttonWidget.setHeight(popupButtonHeight + "px");
-                popupButtonWidget.setHeight(popupButtonHeight + "px");
-                // buttonsHeight = popupButtonHeight;
-            }
-        } else {
-            buttonWidget.setHeight(height);
-            popupButtonWidget.setHeight(height);
-            // buttonsHeight = Integer.parseInt(height.substring(0,
-            // height.length() - 2));
+        getLayoutManager().removeElementResizeListener(
+                getWidget().getElement(), splitButtonResizelistener);
+        getLayoutManager()
+                .removeElementResizeListener(
+                        popupButton.getWidget().getElement(),
+                        popupButtonResizeListener);
+        getLayoutManager().removeElementResizeListener(
+                button.getWidget().getElement(), leftButtonResizeListener);
+        if (loadHandler != null) {
+            loadHandler.removeHandler();
         }
-
     }
 
 }

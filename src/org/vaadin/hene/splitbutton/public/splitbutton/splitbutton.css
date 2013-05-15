@@ -1,6 +1,6 @@
 /* Reindeer theme */
 
-.v-splitbutton {
+.v-app .v-splitbutton {
 	height: 26px;
 	white-space: nowrap;
 }
@@ -8,6 +8,7 @@
 .v-splitbutton .v-button {
 	height: 25px;
 	vertical-align: top;
+	overflow: hidden;
 }
 
 .v-splitbutton .v-button:focus .v-button-wrap {

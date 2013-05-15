@@ -1,10 +1,10 @@
 package org.vaadin.hene.splitbutton.client.splitbutton;
 
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.client.Util;
 
 public class VSplitButton extends Composite {
 
@@ -15,14 +15,12 @@ public class VSplitButton extends Composite {
     private Widget buttonWidget;
     private Widget popupButtonWidget;
 
-    private boolean initDone = false;
+    private Integer buttonHeight;
+    private Integer popupButtonHeight;
 
-    private int buttonWidth;
-    private int popupButtonWidth;
-    private int buttonsHeight;
+    private Integer popupButtonWidth;
 
-    private String width;
-    private String height;
+    private Integer width;
 
     public VSplitButton() {
 
@@ -47,94 +45,57 @@ public class VSplitButton extends Composite {
         panel.add(buttonWidget);
         panel.add(popupButtonWidget);
 
-        if (!initDone) {
-            setButtonWidth();
-            // setHeight();
-        }
-
-        initDone = true;
-
     }
 
-    private void setButtonWidth() {
-        if (width == null) {
-            buttonWidget.setWidth("");
-            popupButtonWidth = -1;
-        } else {
-            popupButtonWidth = Util.getRequiredWidth(popupButtonWidget
-                    .getElement());
+    public Element getPopupButtonElement() {
+        return popupButtonWidget.getElement();
+    }
 
-            buttonWidth = getOffsetWidth() - popupButtonWidth;
-            if (buttonWidth < 0) {
-                buttonWidth = 0;
+    public void adjustSplitButtonWidth(int width) {
+        this.width = width;
+        adjustWidth();
+    }
+
+    private void adjustWidth() {
+        if (width != null && popupButtonWidth != null) {
+            int newWidth = width - popupButtonWidth;
+            if (newWidth < 25) {
+                newWidth = 25;
             }
-            buttonWidget.setWidth(buttonWidth + "px");
+            buttonWidget.setWidth(newWidth + "px");
         }
+
     }
 
-    @Override
-    public void setWidth(String width) {
-        if (width == null || "".equals(width)) {
-            this.width = null;
-        } else {
-            width = removeDecimals(width);
-            this.width = width;
-        }
-
-        Util.setWidthExcludingPaddingAndBorder(this, width, 0);
-
-        if (initDone) {
-            setButtonWidth();
-        }
+    public void setPopupButtonWidth(int popupButtonWidth) {
+        this.popupButtonWidth = popupButtonWidth;
+        adjustWidth();
     }
 
-    private void setHeight() {
-        if (height == null) {
-            buttonWidget.setHeight("");
-            popupButtonWidget.setHeight("");
-            int buttonHeight = Util.getRequiredHeight(buttonWidget);
-            int popupButtonHeight = Util.getRequiredHeight(popupButtonWidget);
-            if (buttonHeight > popupButtonHeight) {
-                buttonWidget.setHeight(buttonHeight + "px");
-                popupButtonWidget.setHeight(buttonHeight + "px");
-                buttonsHeight = buttonHeight;
-            } else {
-                buttonWidget.setHeight(popupButtonHeight + "px");
-                popupButtonWidget.setHeight(popupButtonHeight + "px");
-                buttonsHeight = popupButtonHeight;
-            }
-        } else {
-            buttonWidget.setHeight(height);
-            popupButtonWidget.setHeight(height);
-            buttonsHeight = Integer.parseInt(height.substring(0,
-                    height.length() - 2));
-        }
+    public void setButtonHeight(int buttonHeight) {
+        this.buttonHeight = buttonHeight;
+        adjustHeight();
     }
 
-    private String removeDecimals(String string) {
-        if (string == null) {
-            return null;
-        }
-        if (string.equals("")) {
-            return "";
+    public void adjustHeight() {
+        if (buttonHeight != null) {
+
+            popupButtonWidget.setHeight(buttonHeight + "px");
+            //
+            // if (buttonHeight < popupButtonHeight) {
+            // buttonWidget.setHeight(popupButtonHeight + "px");
+            // popupButtonWidget.setHeight(popupButtonHeight + "px");
+            // } else {
+            // buttonWidget.setHeight(buttonHeight + "px");
+            // popupButtonWidget.setHeight(buttonHeight + "px");
+            // }
         }
 
-        return string.replaceAll("\\..*\\d", "");
     }
 
-    // @Override
-    @Override
-    public void setHeight(String height) {
-        super.setHeight(height);
-        if (height == null || "".equals(height)) {
-            this.height = null;
-        } else {
-            height = removeDecimals(height);
-            this.height = height;
-        }
-        if (initDone) {
-            setHeight();
-        }
+    public void setPopupButtonHeight(int popupButtonHeight) {
+        this.popupButtonHeight = popupButtonHeight;
+        adjustHeight();
     }
 
 }

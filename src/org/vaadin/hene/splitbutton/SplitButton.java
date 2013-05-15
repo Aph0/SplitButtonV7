@@ -65,14 +65,12 @@ public class SplitButton extends AbstractComponent implements HasComponents,
      */
     protected SplitButton(Button button, PopupButton popupButton) {
         this.button = button;
-        button.setHeight("100%");
         button.setParent(this);
         button.addListener(this);
 
         this.popupButton = popupButton;
         // TODO
         // popupButton.setPopupPositionPaintable(this);
-        popupButton.setHeight("100%");
         popupButton.setParent(this);
         popupButton.addPopupVisibilityListener(this);
     }
@@ -203,6 +201,13 @@ public class SplitButton extends AbstractComponent implements HasComponents,
             // some ancestor still disabled, don't update children
             return;
         }
+    }
+
+    @Override
+    public void setHeight(String height) {
+        super.setHeight(height);
+        button.setHeight(height);
+        popupButton.setHeight(height);
     }
 
     @Override

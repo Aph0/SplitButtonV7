@@ -16,11 +16,6 @@ public class VSplitButton extends Composite {
     private Widget popupButtonWidget;
 
     private Integer buttonHeight;
-    private Integer popupButtonHeight;
-
-    private Integer popupButtonWidth;
-
-    private Integer width;
 
     public VSplitButton() {
 
@@ -51,27 +46,6 @@ public class VSplitButton extends Composite {
         return popupButtonWidget.getElement();
     }
 
-    public void adjustSplitButtonWidth(int width) {
-        this.width = width;
-        adjustWidth();
-    }
-
-    private void adjustWidth() {
-        if (width != null && popupButtonWidth != null) {
-            int newWidth = width - popupButtonWidth;
-            if (newWidth < 25) {
-                newWidth = 25;
-            }
-            // buttonWidget.setWidth(newWidth + "px");
-        }
-
-    }
-
-    public void setPopupButtonWidth(int popupButtonWidth) {
-        this.popupButtonWidth = popupButtonWidth;
-        adjustWidth();
-    }
-
     public void setButtonHeight(int buttonHeight) {
         this.buttonHeight = buttonHeight;
         adjustHeight();
@@ -92,11 +66,6 @@ public class VSplitButton extends Composite {
             // }
         }
 
-    }
-
-    public void setPopupButtonHeight(int popupButtonHeight) {
-        this.popupButtonHeight = popupButtonHeight;
-        adjustHeight();
     }
 
 }

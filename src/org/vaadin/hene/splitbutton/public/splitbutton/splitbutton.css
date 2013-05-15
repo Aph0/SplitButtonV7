@@ -3,6 +3,7 @@
 .v-app .v-splitbutton {
 	height: 26px;
 	white-space: nowrap;
+	min-width: 70px;
 }
 
 .v-splitbutton .v-button {

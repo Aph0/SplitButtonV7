@@ -39,7 +39,6 @@ public class SplitbuttonUI extends UI {
 
         SplitButton splitButton2 = new SplitButton("300px wide");
         splitButton2.setWidth("300px");
-        splitButton2.setIcon(new ThemeResource("icons/tick.png"));
         splitButton2.setComponent(new Label("Test"));
         layout.addComponent(splitButton2);
 

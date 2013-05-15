@@ -212,10 +212,20 @@ public class SplitButton extends AbstractComponent implements HasComponents,
     }
 
     @Override
-    public void setWidth(float width, Unit unit) {
-        if (SIZE_UNDEFINED == width && button.getWidth() != SIZE_UNDEFINED) {
+    public void setWidth(String width) {
+        if (width == null || width.equals("")) {
             button.setWidth(null);
-        } else if (button.getWidthUnits() != Unit.PERCENTAGE) {
+        } else {
+            button.setWidth("100%");
+        }
+        super.setWidth(width);
+    }
+
+    @Override
+    public void setWidth(float width, Unit unit) {
+        if (SIZE_UNDEFINED == width || button.getWidth() == SIZE_UNDEFINED) {
+            button.setWidth(null);
+        } else {
             button.setWidth("100%");
         }
         super.setWidth(width, unit);

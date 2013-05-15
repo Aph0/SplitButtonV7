@@ -6,6 +6,7 @@ import org.vaadin.hene.popupbutton.widgetset.client.ui.PopupButtonState;
 import org.vaadin.hene.splitbutton.SplitButton;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -27,17 +28,17 @@ public class SplitButtonConnector extends AbstractComponentContainerConnector {
     private final ElementResizeListener popupButtonResizeListener = new ElementResizeListener() {
         public void onElementResize(ElementResizeEvent e) {
             int buttonWidth = getLayoutManager().getOuterWidth(e.getElement());
-            int buttonHeight = getLayoutManager()
-                    .getOuterHeight(e.getElement());
-            getWidget().setPopupButtonWidth(buttonWidth);
-            getWidget().setPopupButtonHeight(buttonHeight);
-        }
-    };
 
-    private final ElementResizeListener splitButtonResizelistener = new ElementResizeListener() {
-        public void onElementResize(ElementResizeEvent e) {
-            int buttonWidth = getLayoutManager().getOuterWidth(e.getElement());
-            getWidget().adjustSplitButtonWidth(buttonWidth);
+            if (getState().width == null || getState().width.equals("")) {
+                // undef
+            } else if (getState().width.endsWith("px")
+                    || getState().width.endsWith("%")) {
+                getWidget().getButtonWidget().getElement().getStyle()
+                        .setPaddingRight(buttonWidth, Unit.PX);
+                getWidget().getButtonWidget().getElement().getStyle()
+                        .setMarginRight(-buttonWidth, Unit.PX);
+            }
+
         }
     };
 
@@ -52,15 +53,6 @@ public class SplitButtonConnector extends AbstractComponentContainerConnector {
     private HandlerRegistration loadHandler;
 
     public SplitButtonConnector() {
-
-    }
-
-    @Override
-    protected void init() {
-        // TODO Auto-generated method stub
-        super.init();
-        getLayoutManager().addElementResizeListener(getWidget().getElement(),
-                splitButtonResizelistener);
 
     }
 
@@ -131,8 +123,6 @@ public class SplitButtonConnector extends AbstractComponentContainerConnector {
     @Override
     public void onUnregister() {
 
-        getLayoutManager().removeElementResizeListener(
-                getWidget().getElement(), splitButtonResizelistener);
         getLayoutManager()
                 .removeElementResizeListener(
                         popupButton.getWidget().getElement(),

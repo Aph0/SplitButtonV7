@@ -62,7 +62,7 @@ public class VSplitButton extends Composite {
             if (newWidth < 25) {
                 newWidth = 25;
             }
-            buttonWidget.setWidth(newWidth + "px");
+            // buttonWidget.setWidth(newWidth + "px");
         }
 
     }
@@ -80,7 +80,8 @@ public class VSplitButton extends Composite {
     public void adjustHeight() {
         if (buttonHeight != null) {
 
-            popupButtonWidget.setHeight(buttonHeight + "px");
+            popupButtonWidget.setHeight("100%");
+            panel.setHeight(buttonHeight + "px");
             //
             // if (buttonHeight < popupButtonHeight) {
             // buttonWidget.setHeight(popupButtonHeight + "px");

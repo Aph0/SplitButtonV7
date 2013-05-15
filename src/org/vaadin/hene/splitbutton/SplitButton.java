@@ -69,6 +69,7 @@ public class SplitButton extends AbstractComponent implements HasComponents,
         button.addListener(this);
 
         this.popupButton = popupButton;
+        popupButton.setHeight("100%");
         // TODO
         // popupButton.setPopupPositionPaintable(this);
         popupButton.setParent(this);

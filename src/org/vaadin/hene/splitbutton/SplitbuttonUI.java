@@ -45,6 +45,7 @@ public class SplitbuttonUI extends UI {
 
         SplitButton splitButton3 = new SplitButton("100% wide");
         splitButton3.setComponent(new Label("Test"));
+        splitButton3.setIcon(new ThemeResource("icons/emotion_smile.png"));
         splitButton3.setWidth("100%");
         layout.addComponent(splitButton3);
         layout.setExpandRatio(splitButton3, 1);
